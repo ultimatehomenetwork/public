@@ -1,0 +1,29 @@
+---
+version: "2"
+services:
+   watchtower:
+    image: containrrr/watchtower
+    container_name: uhm_watchtower
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/timezone:/etc/timezone:ro
+    environment:
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_LABEL_ENABLE=true
+      - WATCHTOWER_INCLUDE_RESTARTING=true
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+  ---
+   uhm_homer:
+    image: b4bz/homer
+    container_name: uhm_homer
+    volumes:
+      - ${GLOBAL_PATH}/ext/appdata/homer:/www/assets
+    ports:
+      - ${HOMER_APP_PORT}:8080
+    restart: unless-stopped
+    env_file:
+      - ".env"
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
